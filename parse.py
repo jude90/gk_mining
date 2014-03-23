@@ -4,9 +4,10 @@ import requests
 import gc
 import pdb 
 header={"User-Agent":
-'''Mozilla/5.0 (Windows NT 5.1) 
-AppleWebKit/537.36 (KHTML, like Gecko) 
-Chrome/30.0.1599.101 Safari/537.36'''}
+        '''Mozilla/5.0 (Windows NT 5.1) 
+        AppleWebKit/537.36 (KHTML, like Gecko) 
+        Chrome/30.0.1599.101 Safari/537.36'''
+        }
 
 #url='http://www.guokr.com/post/483103/'
 
@@ -50,6 +51,7 @@ def _ukeys_gen(post,pattern ='article'):
             #yield ukey_lst
             break
     #gc.collect()
+    
    
 
 #@profile

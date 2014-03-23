@@ -74,18 +74,18 @@ def foo_reduce(ukey):
         profile = (json.loads(user_json))["result"]
     
         user = dict(
-        ukey = profile["ukey"],
-        blogs = profile["blogs_count"],
-        posts = profile["posts_count"],
-        answers = profile["answers_count"],
-        questions= profile["questions_count"],
-        followers = profile["followers_count"],
-        followings = profile["followings_count"],
-        activities = profile["activities_count"],
+                    ukey = profile["ukey"],
+                    blogs = profile["blogs_count"],
+                    posts = profile["posts_count"],
+                    answers = profile["answers_count"],
+                    questions= profile["questions_count"],
+                    followers = profile["followers_count"],
+                    followings = profile["followings_count"],
+                    activities = profile["activities_count"],
 
-        answer_supports = profile["answer_supports_count"],
-        date_created = profile["date_created"],
-        )
+                    answer_supports = profile["answer_supports_count"],
+                    date_created = profile["date_created"],
+                    )
         return user
     except Exception, e:
         print  >>log , e,"failure user :"+ukey
@@ -101,20 +101,14 @@ def chunks(arr, n):
 def main():    
     urls = json.load(open("urls.txt",'r'))
     
-    page_set = pool.map(foo_map, urls)|where(lambda x:x)
-    
-    pdb.set_trace()
-    #ukeys = partition(filter(lambda x :x ,page_set))
+    page_set = pool.imap(foo_map, urls)|where(lambda x:x)
     ukeys = partition(page_set)
-    #pool.waite()
-    ##~~~~~~~~~
-    #pdb.set_trace()
-    ##~~~~~~~~~
+    '''
     with open("ukeys.txt",'w') as fuk:
         json.dump(ukeys,fuk,indent=4)
-    
+    '''
     print "finish articles !"
-
+    
     users = pool.map(foo_reduce,ukeys.iterkeys())| where(lambda x :x)|as_tuple
     users_lst = chunks(users,1000)
     session = DB_Session()
@@ -130,7 +124,7 @@ def main():
 
 
 if __name__ == '__main__':
-    import pdb; 
+
 
 #    DB_CONNECT_STRING ='mysql+mysqldb://root:@localhost/gk?charset=utf8'
 #    engine = create_engine(DB_CONNECT_STRING,echo=True)
@@ -138,35 +132,7 @@ if __name__ == '__main__':
     print "start at " ,datetime.now()  
     log = open("crawlog.txt",'a')
     main()
-    '''
-    with open("ukeys.txt") as fu:
-        ukeys =json.load(fu)
 
-    users = pool.map(foo_reduce,ukeys.keys()[200:500])| where(lambda x :x)|as_tuple
-    users_lst = chunks(users,13)
-    session = DB_Session()
-    for us in users_lst:
-        session.execute(
-            User.__table__.insert(),
-            us
-            #pool.map(foo_reduce,ukeys.iterkeys())
-        )
-        session.commit()
-    session.close()
-    '''
-    '''uukeys=['za4yxz', 'whpaai', 'whpaai', '6g4qev', 'kshjrm', 'wpwjru', 'idqu9l', 'j52hfj', 'lq7fqy', 'r7wdwu', 'za4yxz', '104am6', 'dnjmmr', 'wjfeyk', 'jobman', 'hzcfnk', 'hzcfnk', 'bqx9aa', 'udk3j8', 'ifv1x3', '40c8cm', 'ai606k', 's9anto', 'xfbhhk', 'kfm15h', '77ti3u', 'jgwvuw', 'cyhrbd', 'h8zga6', 'qeko3g', '6tbqv2', 'za4yxz', '6tbqv2', 'e900sl', 'mflxkk', 'jxn1mp', '165696', '5vowdn', 'pan4yn', 'l2kho8', '4d8ooe', '4hjui8', 'sk8yhj', 'vkq5fk', 'n5h8e9', 'rmd0v0', 'z6qbkm', 'toxrf4', 'za4yxz', 'whpaai', 'whpaai', '6g4qev', 'kshjrm', 'wpwjru', 'idqu9l', 'j52hfj', 'lq7fqy', 'r7wdwu', 'za4yxz', '104am6', 'dnjmmr', 'wjfeyk', 'jobman', 'hzcfnk', 'hzcfnk', 'bqx9aa', 'udk3j8', 'ifv1x3', '40c8cm', 'ai606k', 's9anto', 'xfbhhk', 'kfm15h', '77ti3u', 'jgwvuw', 'cyhrbd', 'h8zga6', 'qeko3g', '6tbqv2'] 
-    pool =Pool(multiprocessing.cpu_count()*2)
-    users = pool.map(foo_reduce,uukeys)
-    session = DB_Session()
-
-    session.execute(
-        User.__table__.insert(),
-        users
-        #pool.map(foo_reduce,ukeys.iterkeys())
-    ) 
-    session.commit()
-    session.close() 
-    '''
     '''    
     print foo_reduce('za4yxz')
     print foo_reduce('toxrf4')
